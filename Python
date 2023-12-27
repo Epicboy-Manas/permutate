@@ -1,0 +1,45 @@
+import itertools
+import string
+ 
+def generate_substitutions(char):
+    substitutions = { 'e': ['e', 'E', '3'],
+                      'a': ['a', 'A', '4'],
+                      'i': ['i', 'I', '1'],
+                      'o': ['o', 'O', '0'] }
+ 
+    return substitutions.get(char.lower(), [char, char.upper()]) if char.isalpha() else [char]
+ 
+def generate_secondary_permutations(primary_permutation):
+    # New rules for secondary permutations
+    second_char_options = ['L', 'l']
+    third_char_options = ['O', 'o', '0']
+    fourth_char_options = ['L', 'l']
+ 
+    secondary_options = itertools.product(second_char_options, third_char_options, fourth_char_options)
+ 
+    return [primary_permutation + '_' + ''.join(option) for option in secondary_options]
+ 
+def generate_permutations(input_string):
+    all_substitutions = [generate_substitutions(char) for char in input_string]
+    primary_permutations = set(''.join(candidate) for candidate in itertools.product(*all_substitutions))
+ 
+    # Generate and combine secondary permutations
+    all_permutations = []
+    for permutation in primary_permutations:
+        all_permutations.extend(generate_secondary_permutations(permutation))
+ 
+    return all_permutations
+ 
+def write_to_file(permutations, filename="permutations.txt"):
+    with open(filename, 'w') as file:
+        for permutation in permutations:
+            file.write(permutation + "\n")
+ 
+def main():
+    input_string = input("Enter the string: ")
+    permutations = generate_permutations(input_string)
+    write_to_file(permutations)
+    print(f"Permutations written to 'permutations.txt'")
+ 
+if __name__ == "__main__":
+    main()
